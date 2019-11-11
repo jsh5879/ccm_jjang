@@ -101,7 +101,7 @@ const route = (app) => {
         })
     })
     app.get('/Score', (req, res) => {
-        res.render('score');
+        res.redirect('/CoursePage');
     })
     app.get('/AddHomeworkPage', (req, res) => {
         let sendData = JSON.parse(JSON.stringify(req.session.data));
@@ -114,7 +114,7 @@ const route = (app) => {
         })
     })
     app.get('/HomeworkPage', (req, res) => {
-        const hid = req.query.hid;
+        hid = req.query.hid;
         let sendData = JSON.parse(JSON.stringify(req.session.data));
         const query = `SELECT * FROM course WHERE cid = '${cid}';`;
         const search = "SELECT DISTINCT name FROM course;";
@@ -131,6 +131,17 @@ const route = (app) => {
                 res.render('notify', { success: true, message: "수강 신청 되었습니다.", move: "/Main" });
             else
                 res.render('notify', { success: false, message: "다시 시도해 주세요.", move: "/Main" });
+        })
+    })
+    app.post('/AddScore', (req, res) => {
+        const score = req.body.score;
+        const query = `INSERT INTO score(uid, hid, score, date) VALUES ('${req.session.data.id}', '${hid}', ${score}, NOW());`;
+        const update = `UPDATE homework SET count = (SELECT COUNT(DISTINCT uid) FROM score WHERE hid = '${hid}') WHERE hid = ${hid};`;
+        connection.query(query + update, function (err, result) {
+            if ( !err )
+                res.render('notify', { success: true, message: "점수가 등록되었습니다.", move: "/Score" });
+            else
+                res.render('notify', { success: true, message: "다시 시도해 주세요.", move: "/Score" });
         })
     })
     app.post('/AddHomework', (req, res) => {

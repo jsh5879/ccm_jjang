@@ -145,16 +145,20 @@
       $("#homework_page").submit();
     }
 
-    function addhomework(e) {
-      $("#homework_list").append(`<div onclick="homeworkpage(${e.hid});"><h4 class="small font-weight-bold">${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
-      <div class="progress mb-4" style="margin-bottom: 0px">
-        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-      </div></div>`);
+    const attendant = <%-JSON.stringify(attendant) %>
+
+    function addhomework(e, index) {
+        const color = [ "bg-danger", "bg-warning", "bg-primary", "bg-info", "bg-success" ];
+        const percent = (e.count / attendant) * 100;
+        $("#homework_list").append(`<div onclick="homeworkpage(${e.hid});"><h4 class="small font-weight-bold">[HW #${index+1}] ${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
+        <div class="progress mb-4" style="margin-bottom: 0px">
+            <div class="progress-bar ${color[Math.floor(percent/25)]}" role="progressbar" style="width: ${percent}%" aria-valuenow="${e.count}" aria-valuemin="0" aria-valuemax="${attendant}">${percent == 100 ? "Complete" : e.count}</div>
+        </div></div>`);
     }
 
     const hlist = <%-JSON.stringify(hlist) %>
 
-    hlist.forEach(e => addhomework(e));
+    hlist.forEach( (e, index) => addhomework(e, index));
 
   </script>
 
