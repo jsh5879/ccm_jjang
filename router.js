@@ -82,11 +82,11 @@ const route = (app) => {
             sendData.cinfo = result[0][0];
             sendData.search = result[1].map( e => e.name );
             sendData.hlist = result[2];
+            const attendant = result[3].map( e => e.uid.toString() );
+            sendData.attendant = attendant.length;
             if ( req.session.data.role == "교수" ) {
                 res.render('prof_course', sendData);
             } else {
-                const attendant = result[3].map( e => e.uid.toString() );
-                sendData.attendant = attendant.length;
                 if ( attendant.includes(req.session.data.id) ) {
                     res.render('student_course', sendData);
                 } else {
