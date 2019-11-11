@@ -2,6 +2,9 @@
 const connection = mysql.init();
 mysql.open(connection);
 
+const bodyParser = require('body-parser')
+const request = require('request')
+
 var cid, hid;
 
 function callMainPage(req, res, sessionData) {
@@ -194,6 +197,19 @@ const route = (app) => {
                 res.render('register', { notify: true, message: "가입 실패. 다시 시도해주세요." });
         })
     })
+
+    app.post('/editor', function (req, res) {
+        request.post({
+            headers: {'content-type' : 'application/json'},
+            url: 'http://15.164.217.178:3000/',
+            body: req.body,
+            json: true
+        }, (error, response, body) => {
+            console.log(body);
+            res.json(body);
+        });
+        
+    });
 }
 
 function insertData() {
