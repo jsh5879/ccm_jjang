@@ -2,7 +2,7 @@
 const connection = mysql.init();
 mysql.open(connection);
 
-var cid;
+var cid, hid;
 
 function callMainPage(req, res, sessionData) {
     // insertData();
@@ -73,15 +73,23 @@ const route = (app) => {
             cid = req.query.cid;
         const query = `SELECT * FROM course WHERE cid = '${cid}';`;
         const search = "SELECT DISTINCT name FROM course;";
-        const homework = `SELECT * FROM homework WHERE cid = '${cid}'`;
-        connection.query(query + search + homework, function (err, result) {
+        const homework = `SELECT * FROM homework WHERE cid = '${cid}';`;
+        const apply = `SELECT uid FROM applyinfo WHERE cid = '${cid}';`;
+        connection.query(query + search + homework + apply, function (err, result) {
             sendData.cinfo = result[0][0];
             sendData.search = result[1].map( e => e.name );
             sendData.hlist = result[2];
-            if ( req.session.data.role == "교수" )
+            if ( req.session.data.role == "교수" ) {
                 res.render('prof_course', sendData);
-            else
-                res.render('student_course', sendData);
+            } else {
+                const attendant = result[3].map( e => e.uid.toString() );
+                sendData.attendant = attendant.length;
+                if ( attendant.includes(req.session.data.id) ) {
+                    res.render('student_course', sendData);
+                } else {
+                    res.render('apply_course', sendData);
+                }
+            }
         })
     })
     app.get('/MakeCoursePage', (req, res) => {
@@ -114,6 +122,15 @@ const route = (app) => {
             sendData.cinfo = result[0][0];
             sendData.search = result[1].map( e => e.name );
             res.render('editors', sendData);
+        })
+    })
+    app.post('/Apply', (req, res) => {
+        const query = `INSERT INTO applyinfo(cid, uid) VALUES ('${cid}', '${req.session.data.id}');`;
+        connection.query(query, function (err, result) {
+            if ( !err )
+                res.render('notify', { success: true, message: "수강 신청 되었습니다.", move: "/Main" });
+            else
+                res.render('notify', { success: false, message: "다시 시도해 주세요.", move: "/Main" });
         })
     })
     app.post('/AddHomework', (req, res) => {
