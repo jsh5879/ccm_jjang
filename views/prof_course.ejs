@@ -36,7 +36,7 @@
           <!-- Project Card Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">과제 현황</h6>
+              <span class="m-0 font-weight-bold text-primary">과제 현황</span><span class="m-0 font-weight-bold text-primary" style="float: right">수강 인원 : <%-attendant%> 명</span>
             </div>
             <div class="card-body" id="homework_list">
             </div>
@@ -91,8 +91,11 @@
     </div>
   </div>
 
-  <form action="/HomeworkPage" method="GET" id="homework_page" style="display: none">
+  <form action="/KillHW" method="POST" id="killHW" style="display: none">
     <input type="text" name="hid" id="hid"/> 
+  </form>
+  <form action="/Score" method="POST" id="scoreboard" style="display: none">
+    <input type="text" name="hid" id="shid"/> 
   </form>
 
   <!-- Bootstrap core JavaScript-->
@@ -140,9 +143,14 @@
       $("#search_course").submit();
     })
 
-    function homeworkpage(hid) {
+    function kill_HW(hid) {
       $("#hid").val(hid);
-      $("#homework_page").submit();
+      $("#killHW").submit();
+    }
+
+    function scoreboard(hid) {
+      $("#shid").val(hid);
+      $("#scoreboard").submit();
     }
 
     const attendant = <%-JSON.stringify(attendant) %>
@@ -150,10 +158,14 @@
     function addhomework(e, index) {
         const color = [ "bg-danger", "bg-warning", "bg-primary", "bg-info", "bg-success" ];
         const percent = (e.count / attendant) * 100;
-        $("#homework_list").append(`<div onclick="homeworkpage(${e.hid});"><h4 class="small font-weight-bold">[HW #${index+1}] ${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
-        <div class="progress mb-4" style="margin-bottom: 0px">
+        $("#homework_list").append(`<div class="row"><div class="col-lg-10"><h4 class="small font-weight-bold">[HW #${index+1}] ${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
+        <div class="progress mb-4" style="margin-bottom: 2%">
             <div class="progress-bar ${color[Math.floor(percent/25)]}" role="progressbar" style="width: ${percent}%" aria-valuenow="${e.count}" aria-valuemin="0" aria-valuemax="${attendant}">${percent == 100 ? "Complete" : e.count}</div>
-        </div></div>`);
+        </div></div>
+        <div class="col-lg-2">
+        <a href="javascript:()" onclick="scoreboard(${e.hid})" class="btn btn-primary btn-icon-split" style="margin-bottom: 1.5%; margin-left: 10%"><span class="text">점수</span></a>
+        <a href="javascript:()" onclick="kill_HW(${e.hid})" class="btn btn-secondary btn-icon-split" style="margin-bottom: 1.5%; margin-left: 10%"><span class="text">마감</span></a>
+        </div>`);
     }
 
     const hlist = <%-JSON.stringify(hlist) %>

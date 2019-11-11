@@ -103,8 +103,20 @@ const route = (app) => {
             res.render('makecoursepage', sendData);
         })
     })
-    app.get('/Score', (req, res) => {
-        res.redirect('/CoursePage');
+    app.post('/Score', (req, res) => {
+        let sendData = JSON.parse(JSON.stringify(req.session.data));
+        const hid = req.body.hid;
+        const query = `SELECT a.id, a.name, a.department, s.score, s.date FROM score AS s JOIN account AS a ON s.uid = a.id AND s.hid = ${hid};`;
+        const course = `SELECT * FROM course WHERE cid = '${cid}';`;
+        const search = "SELECT DISTINCT name FROM course;";
+        const homework = `SELECT hname FROM homework WHERE hid = ${hid};`;
+        connection.query(query + course + search + homework, function (err, result) {
+            sendData.score = result[0];
+            sendData.cinfo = result[1][0];
+            sendData.search = result[2];
+            sendData.hname = result[3][0].hname;
+            res.render('score', sendData);
+        })
     })
     app.get('/AddHomeworkPage', (req, res) => {
         let sendData = JSON.parse(JSON.stringify(req.session.data));
@@ -127,13 +139,23 @@ const route = (app) => {
             res.render('editors', sendData);
         })
     })
+    app.post('/KillHW', (req, res) => {
+        const hid = req.body.hid;
+        const query = `UPDATE homework SET deadline = NOW() WHERE hid = ${hid};`;
+        connection.query(query, function (err, result) {
+            if ( !err )
+                res.render('notify', { success: true, message: "마감 되었습니다.", move: "/CoursePage" });
+            else
+                res.render('notify', { success: false, message: "다시 시도해 주세요", move: "javascript:history.back()" });
+        })
+    })
     app.post('/Apply', (req, res) => {
         const query = `INSERT INTO applyinfo(cid, uid) VALUES ('${cid}', '${req.session.data.id}');`;
         connection.query(query, function (err, result) {
             if ( !err )
                 res.render('notify', { success: true, message: "수강 신청 되었습니다.", move: "/Main" });
             else
-                res.render('notify', { success: false, message: "다시 시도해 주세요.", move: "/Main" });
+                res.render('notify', { success: false, message: "다시 시도해 주세요.", move: "javascript:history.back()" });
         })
     })
     app.post('/AddScore', (req, res) => {
@@ -142,9 +164,9 @@ const route = (app) => {
         const update = `UPDATE homework SET count = (SELECT COUNT(DISTINCT uid) FROM score WHERE hid = '${hid}') WHERE hid = ${hid};`;
         connection.query(query + update, function (err, result) {
             if ( !err )
-                res.render('notify', { success: true, message: "점수가 등록되었습니다.", move: "/Score" });
+                res.render('notify', { success: true, message: "점수가 등록되었습니다.", move: "/CoursePage" });
             else
-                res.render('notify', { success: true, message: "다시 시도해 주세요.", move: "/Score" });
+                res.render('notify', { success: true, message: "다시 시도해 주세요.", move: "javascript:history.back()" });
         })
     })
     app.post('/AddHomework', (req, res) => {

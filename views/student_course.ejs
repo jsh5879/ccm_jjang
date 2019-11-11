@@ -140,7 +140,7 @@
         const color = [ "bg-danger", "bg-warning", "bg-primary", "bg-info", "bg-success" ];
         const percent = (e.count / attendant) * 100;
         $("#homework_list").append(`<div onclick="homeworkpage(${e.hid});"><h4 class="small font-weight-bold">[HW #${index+1}] ${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
-        <div class="progress mb-4" style="margin-bottom: 0px">
+        <div class="progress mb-4" style="margin-bottom: 2%">
             <div class="progress-bar ${color[Math.floor(percent/25)]}" role="progressbar" style="width: ${percent}%" aria-valuenow="${e.count}" aria-valuemin="0" aria-valuemax="${attendant}">${percent == 100 ? "Complete" : e.count}</div>
         </div></div>`);
     }
