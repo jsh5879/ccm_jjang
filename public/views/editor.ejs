@@ -1,0 +1,129 @@
+    <div id='content'></div>
+
+
+  <div class="col-md-12">
+    <div class="form-horizontal submit-form">
+      <legend>HW#1 Hello World 출력</legend><input type='hidden' value='1000' name="problem_id">
+      <div class="form-group"><label class="col-md-2 control-label" for="source">언어</label>
+        <div class="col-md-10">
+          <div>
+            <input type="radio" name="language" value="C" checked="checked">C
+            <input type="radio" name="language" value="C++">C++
+            <input type="radio" name="language" value="Java">Java
+          </div>
+
+        </div>
+        <div class="form-group"><label class="col-md-2 control-label" for="source">소스 코드</label>
+          <div class="col-md-10"><textarea id="source"></textarea></div>
+        </div>
+
+        <div class="form-group">
+          
+    </form>
+    
+    <form action="/editor" method="POST" id="hiddenForm" style="display : none">
+      <input type="text" name="sourceValue" id="hiddenValue">
+    </form>
+    <button class="btn btn-primary" id="sendButton" >제출</button>
+        </div>
+    </div>
+    </div>
+  </div>
+  <script type="text/Javascript">
+    let defaultCode = [ `#include <stdio.h>&#10;&#10;int main(){&#10;&#09;printf("Hello World!");&#10;&#09;return 0;&#10;}`,
+      `#include <iostream>&#10;&#10;using namespace std;&#10;&#10;int main(){&#10;&#09;cout << "Hello World!" << endl;&#10;&#09;return 0;&#10;}`,
+      `public class Test{&#10;&#09;public static void main(String[] args){&#10;&#09;&#09;System.out.println("Hello World!");&#10;&#09;}&#10;}`
+    ];
+
+    let editor = CodeMirror.fromTextArea(document.getElementById("source"), {
+      lineNumbers: true,
+      matchBrackets: true,
+      mode: "text/x-csrc"
+    });
+
+    editor.setSize(500, 300);
+
+    function changeLanguage(e) {
+      var value = $(e).val();
+      var checked = $(e).prop('checked');
+      var $label = $(e).next();
+
+      if (checked) {
+        jQuery('.CodeMirror.cm-s-default').remove();
+        if (value == 'C') {
+          jQuery("#source").html(defaultCode[0]);
+          editor = CodeMirror.fromTextArea(document.getElementById("source"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: "text/x-csrc"
+          });
+          editor.setSize(500, 300);
+        }
+        else if (value == 'C++') {
+          jQuery("#source").html(defaultCode[1]);
+          editor = CodeMirror.fromTextArea(document.getElementById("source"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: "text/x-c++src"
+          });
+          editor.setSize(500, 300);
+
+        }
+        else if (value == 'Java') {
+          jQuery("#source").html(`${defaultCode[2]}`);
+
+          editor = CodeMirror.fromTextArea(document.getElementById("source"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: "text/x-java"
+          });
+          editor.setSize(500, 300);
+        }
+      }
+    }
+
+    $("document").ready(function() {
+      $('input[name="language"]').each(function () {
+        changeLanguage(this);
+      });
+    })
+
+    $('input[name="language"]').change(function () {
+      $('input[name="language"]').each(function () {
+        changeLanguage(this);
+      });
+    });
+
+    $(function () {
+      var failMessage = function () {
+        return alert("붙여넣기 기능은 사용하실 수 없습니다."), false;
+      },
+        preventEvent = {
+          "keydown": function (e) {
+            var keycode = function (e) {
+              return ('which' in e ? e.which : e.keyCode)
+            }(e),
+              ctrl_cv = (e.ctrlKey && (keycode == 118 || keycode == 86)),
+              shift_insert = (e.shiftKey && keycode == 45);
+            if (ctrl_cv || shift_insert) {
+              return failMessage();
+            }
+          }
+          , "mousedown": function (e) {
+            var rightClick = (e.button == 2);
+            if (rightClick) {
+              return failMessage();
+            }
+          }
+          , "contextmenu": function (e) {
+            return failMessage();
+          }
+        };
+      $(document).bind(preventEvent);
+    }());
+
+    $("#sendButton").click(function() {
+      const t = editor.getValue();
+      alert(t);
+    });
+  </script>

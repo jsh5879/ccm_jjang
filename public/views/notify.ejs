@@ -1,0 +1,9 @@
+<% include header %>
+    <script type="text/Javascript">
+        const isSuccess = <%-JSON.stringify(success) %>
+        const message = <%-JSON.stringify(message) %>
+        alert(message);
+        const move = <%-JSON.stringify(move) %>
+        window.location.href = move;
+    </script>
+<% include footer %>
