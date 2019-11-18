@@ -11,6 +11,7 @@ app.use(sessionStorage)
 const router = require('./router.js')(app)
 
 app.use(express.static('template'))
+app.use(express.static('images'))
 app.set('view engine', 'ejs')
 app.engine('html', require('ejs').renderFile)
 
