@@ -30,10 +30,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
           <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800" id="cname"></h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-sm text-white-50" id="pname"></i></a>
-          </div>
+          <% include coursename %>
           <!-- Project Card Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -136,13 +133,36 @@
 
     const attendant = <%-JSON.stringify(attendant) %>
 
+    function isSubmit(uid, hid, index) {
+      $.ajax({
+        type: 'GET',
+        url: '/IsSubmit',
+        data: {uid: `${uid}`, hid: `${hid}`},
+        success: function(data) {
+          if ( data == "true" ) {
+            $(`#s${index}`).append(`<a href="javascript:()" class="btn btn-secondary btn-icon-split" style="margin-bottom: 1.5%; margin-left: 10%"><span class="text">제출됨</span></a>`);
+          } else {
+            $(`#s${index}`).append(`<a href="javascript:()" class="btn btn-danger btn-icon-split" style="margin-bottom: 1.5%; margin-left: 10%"><span class="text">미제출</span></a>`);
+          }
+        }
+      });
+    }
+
+    const uid = <%-JSON.stringify(id) %>
+
     function addhomework(e, index) {
         const color = [ "bg-danger", "bg-warning", "bg-primary", "bg-info", "bg-success" ];
         const percent = (e.count / attendant) * 100;
-        $("#homework_list").append(`<div onclick="homeworkpage(${e.hid});"><h4 class="small font-weight-bold">[HW #${index+1}] ${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
-        <div class="progress mb-4" style="margin-bottom: 2%">
+        $("#homework_list").append(`<div class="row">
+        <div class="col-lg-10"><h4 class="small font-weight-bold">[HW #${index+1}] ${e.hname}<span class="float-right">제출 기한 : ${e.deadline}</span></h4>
+          <div class="progress mb-4" style="margin-bottom: 2%">
             <div class="progress-bar ${color[Math.floor(percent/25)]}" role="progressbar" style="width: ${percent}%" aria-valuenow="${e.count}" aria-valuemin="0" aria-valuemax="${attendant}">${percent == 100 ? "Complete" : e.count}</div>
+          </div>
+        </div>
+        <div class="col-lg-2" id="s${index}">
+          <a href="javascript:()" onclick="homeworkpage(${e.hid});" class="btn btn-primary btn-icon-split" style="margin-bottom: 1.5%; margin-left: 10%"><span class="text">제출</span></a>
         </div></div>`);
+        isSubmit(uid, e.hid, index);
     }
 
     $("#search_btn").click(function() {

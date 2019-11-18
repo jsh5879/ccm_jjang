@@ -30,10 +30,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
           <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800" id="cname"></h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-sm text-white-50" id="pname"></i></a>
-          </div>
+          <% include coursename %>
           <!-- Project Card Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -45,13 +42,17 @@
                         <input type="text" class="form-control form-control-user" id="hname" name="hname" placeholder="과제명을 입력해주세요">
                     </div>
                     <div class="col-sm-3">
-                        <input type="text" class="form-control form-control-user" id="ymd" name="ymd" placeholder="제출 마감일 : 2019-11-07">
+                        <input type="date" class="form-control form-control-user" id="day" name="day" value="">
+                        <script type="text/Javascript">
+                          const seoul = new Date(Date.now() - (new Date().getTimezoneOffset() * 60000));
+                          document.getElementById("day").value = seoul.toISOString().substring(0, 10);
+                        </script>
                     </div>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control form-control-user" id="hour" name="hour" placeholder="00 ~ 23 (h)">
-                    </div>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control form-control-user" id="minute" name="minute" placeholder="00 ~ 59 (m)">
+                    <div class="col-sm-3">
+                        <input type="time" class="form-control form-control-user" id="hour" name="hour">
+                        <script type="text/Javascript">
+                          document.getElementById("hour").value = seoul.toISOString().substring(11, 16);
+                        </script>
                     </div>
                     <input type="text" name="deadline" id="deadline" style="display: none"/> 
                 </form>
@@ -159,7 +160,7 @@
     })
 
     $("#hreg_btn").click(function () {
-        const date = $("#ymd").val() + " " + $("#hour").val() + ":" + $("#minute").val() + ":00";
+        const date = $("#day").val() + " " + $("#hour").val();
         $("#deadline").val(date);
         $("#addhomework").submit();
     })

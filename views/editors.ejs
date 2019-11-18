@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
@@ -19,18 +19,24 @@
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
   <link rel=stylesheet href="codeMirror/lib/codemirror.css">
-    <script src="codeMirror/lib/codemirror.js"></script>
-    <script src="codeMirror/mode/xml/xml.js"></script>
-    <script src="codeMirror/mode/javascript/javascript.js"></script>
-    <script src="codeMirror/mode/clike/clike.js"></script>
-    <script src="codeMirror/mode/css/css.js"></script>
-    <script src="codeMirror/mode/htmlmixed/htmlmixed.js"></script>
-    <script src="codeMirror/addon/edit/matchbrackets.js"></script>
-    <script src="codeMirror/doc/activebookmark.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script src="codeMirror/lib/codemirror.js"></script>
+  <script src="codeMirror/addon/selection/active-line.js"></script>
+  <script src="codeMirror/addon/selection/mark-selection.js"></script>
+  <script src="codeMirror/mode/xml/xml.js"></script>
+  <script src="codeMirror/mode/javascript/javascript.js"></script>
+  <script src="codeMirror/mode/clike/clike.js"></script>
+  <script src="codeMirror/mode/css/css.js"></script>
+  <script src="codeMirror/mode/htmlmixed/htmlmixed.js"></script>
+  <script src="codeMirror/addon/edit/matchbrackets.js"></script>
+  <script src="codeMirror/doc/activebookmark.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 
   <!-- Custom styles for this page -->
   <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+  <style>
+    .fixed-line { background-color: #ff7; }
+  </style>
 
 </head>
 
@@ -40,10 +46,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
           <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800" id="cname"></h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-sm text-white-50" id="pname"></i></a>
-          </div>
+          <% include coursename %>
           <% include editor %>
         </div>
       </div>

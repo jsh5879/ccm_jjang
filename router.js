@@ -4,8 +4,6 @@ mysql.open(connection);
 
 const bodyParser = require('body-parser')
 const request = require('request')
-const fs = require('fs')
-const exec = require('child_process');
 
 var cid, hid;
 
@@ -40,16 +38,6 @@ function callMainPage(req, res, sessionData) {
             })
         }
     }
-}
-
-function LineTrim(code) {
-    return code.split('\n').reduce( (pre, e) => {
-        if ( !e.trim().length )
-            pre += "\n";
-        else
-            pre += `${e}\n`;
-        return pre;
-    }, "" ).slice(0, -1);
 }
 
 const route = (app) => {
@@ -145,77 +133,15 @@ const route = (app) => {
         let sendData = JSON.parse(JSON.stringify(req.session.data));
         const query = `SELECT * FROM course WHERE cid = '${cid}';`;
         const search = "SELECT DISTINCT name FROM course;";
-        const homework = `SELECT * FROM homework WHERE hid = ${hid};`;
-        connection.query(query + search + homework, (err, result) => {
+        connection.query(query + search, (err, result) => {
             sendData.cinfo = result[0][0];
             sendData.search = result[1].map( e => e.name );
-            sendData.hinfo = result[2][0];
             res.render('editors', sendData);
         })
     })
-    app.get('/IsSubmit', (req, res) => {
-        const uid = req.query.uid, hid = req.query.hid;
-        const query = `SELECT COUNT(*) as cnt FROM score WHERE hid = '${hid}' and uid = '${uid}';`;
-        connection.query(query, (err, result) => {
-            if ( result[0].cnt )
-                res.send("true");
-            else
-                res.send("false");
-        })
-    })
-    app.post('/EvaluateCode', (req, res) => {
-        const lang = req.body.language;
-        const code = LineTrim((req.body.code).replace(/ +/g, " ").replace(/\t/g, "    "));
-        const origin = LineTrim((req.body.code).replace(/\t/g, "    "));
-    
-        fs.writeFileSync(`1.${lang}`, code, 'utf8');
-        fs.writeFileSync(`1.${lang}.orig`, origin, 'utf8');
-        exec.execSync(`astyle 1.${lang} -p`);
-        const result = fs.readFileSync(`1.${lang}`, 'utf8');
-        exec.exec(`diff 1.${lang}.orig 1.${lang}`, function(err, stdout) {
-            const result = stdout.split("\n");
-            const diff = result.filter( e => {
-                if ( !isNaN(e[0]) )
-                  return true;
-                return false;
-            });
-            const count = diff.reduce( (pre, e) => {
-                const pattern = /[abcd\>\<]/;
-                const fix = e.split(pattern)[1].split(",");
-                if ( fix.length == 1 )
-                    pre += 1;
-                else {
-                    pre += (fix[1]-fix[0]+1);
-                }
-                return pre;
-            }, 0 );
-            const score = Math.floor((count / result.length) * 100);
-            const query = `INSERT INTO score(uid, hid, score, date) VALUES ('${req.session.data.id}', '${hid}', ${score}, NOW())`;
-            connection.query(query, (err, result) => {
-                if ( !err ) {
-                    res.render('notify', { success: true, message: "제출 되었습니다.", move: "/CoursePage" });
-                } else {
-                    res.render('notify', { success: true, message: "다시 시도해 주세요", move: "javascript:history.back()" });
-                }
-            })
-        });
-    })
-    app.post('/Convert', (req, res) => {
-        const lang = req.body.language;
-        const code = LineTrim((req.body.code).replace(/ +/g, " ").replace(/\t/g, "    "));
-        const origin = LineTrim((req.body.code).replace(/\t/g, "    "));
-    
-        fs.writeFileSync(`1.${lang}`, code, 'utf8');
-        fs.writeFileSync(`1.${lang}.orig`, origin, 'utf8');
-        exec.execSync(`astyle 1.${lang} -p`);
-        const result = fs.readFileSync(`1.${lang}`, 'utf8');
-        exec.exec(`diff 1.${lang}.orig 1.${lang}`, function(err, stdout) {
-            res.json({'result': result, 'diff': stdout});
-        });
-    })
     app.post('/KillHW', (req, res) => {
         const hid = req.body.hid;
-        const query = `UPDATE homework SET deadline = DATE_FORMAT(now(), '%Y-%m-%d %H:%i') WHERE hid = ${hid};`;
+        const query = `UPDATE homework SET deadline = NOW() WHERE hid = ${hid};`;
         connection.query(query, function (err, result) {
             if ( !err )
                 res.render('notify', { success: true, message: "마감 되었습니다.", move: "/CoursePage" });
@@ -293,6 +219,19 @@ const route = (app) => {
                 res.render('register', { notify: true, message: "가입 실패. 다시 시도해주세요." });
         })
     })
+
+    app.post('/editor', function (req, res) {
+        request.post({
+            headers: {'content-type' : 'application/json'},
+            url: 'http://15.164.217.178:3000/',
+            body: req.body,
+            json: true
+        }, (error, response, body) => {
+            console.log(body);
+            res.json(body);
+        });
+        
+    });
 }
 
 function insertData() {

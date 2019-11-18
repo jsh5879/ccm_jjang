@@ -28,53 +28,52 @@
       <div class="card-body p-0">
         <!-- Nested Row within Card Body -->
         <div class="row">
-          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+            <div class="col-lg-2"></div>
           <div class="col-lg-7">
             <div class="p-5">
               <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                <h1 class="h4 text-gray-900 mb-4">회원가입</h1>
               </div>
               <form class="user" action="/reg" method="POST">
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="id" name="id" placeholder="ID Number">
+                    <input type="text" class="form-control form-control-user" id="id" name="id" placeholder="학번 또는 교직원번호">
                   </div>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="name" name="name" placeholder="Name">
+                    <input type="text" class="form-control form-control-user" id="name" name="name" placeholder="이름">
                   </div>
                 </div>
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password">
+                    <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="비밀번호">
                   </div>
                   <div class="col-sm-6">
-                    <input type="password" class="form-control form-control-user" id="repeat_password" name="repeat_password" placeholder="Repeat Password">
+                    <input type="password" class="form-control form-control-user" id="repeat_password" name="repeat_password" placeholder="비밀번호확인">
                   </div>
                 </div>
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="dep" name="department" placeholder="Department">
+                    <input type="text" class="form-control form-control-user" id="dep" name="department" placeholder="학과">
                   </div>
                   <div class="col-sm-6">
                     <div class="custom-control custom-checkbox small" style="position:absolute; top:50%; left:38%; transform: translate(-50%, -50%);">
                       <input type="checkbox" class="custom-control-input" id="customCheck">
-                      <label class="custom-control-label" for="customCheck">PROFESSOR</label>
+                      <label class="custom-control-label" for="customCheck">교수입니까?</label>
                       <input type="hidden" id="prof" name="prof"/>
                     </div>
                   </div>
                 </div>
-                <input type="submit" class="btn btn-primary btn-user btn-block" id="reg_btn" value="Register Account"/>
+                <input type="submit" class="btn btn-primary btn-user btn-block" id="reg_btn" value="가입하기"/>
                 <hr>
               </form>
               <hr>
               <!-- <div class="text-center">
                 <a class="small" href="forgot-password.html">Forgot Password?</a>
               </div> -->
-              <div class="text-center">
-                <a class="small" href="login.html">Already have an account? Login!</a>
-              </div>
+              
             </div>
           </div>
+          <div class="col-lg-2"></div>
         </div>
       </div>
     </div>
